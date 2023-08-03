@@ -14,8 +14,8 @@ class Places extends Model
         'description',
         'coordinates',
         'images',
-        'price',
         'type',
+        'nameEvent',
         'dayEvent',
         'hourEvent',
     ];

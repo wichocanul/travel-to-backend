@@ -17,11 +17,11 @@ return new class extends Migration
             $table->string('description');
             $table->json('coordinates');
             $table->json('images');
-            $table->float('price');
             $table->unsignedBigInteger('type');
             $table->foreign('type')->references('id')->on('categories');
-            $table->date('dayEvent'); // Columna para almacenar la fecha en formato 'YYYY-MM-DD'
-            $table->time('hourEvent'); // Columna para almacenar la hora en formato 'HH:mm'
+            $table->string('nameEvent');
+            $table->date('dayEvent'); // 'YYYY-MM-DD'
+            $table->time('hourEvent'); // 'HH:mm'
             $table->timestamps();
         });
     }
