@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Places;
 use Illuminate\Http\Request;
 
+use function PHPSTORM_META\type;
+
 class PlacesController extends Controller
 {
     /**
@@ -12,7 +14,31 @@ class PlacesController extends Controller
      */
     public function index()
     {
-        //
+        $places = Places::all();
+
+        $transformPlaces = $places->map(function($place) {
+            $coordinates = json_decode($place->coordinates);
+            $images = json_decode($place->images);
+
+            return [
+                'id' => $place->id,
+                'name' => $place->name,
+                'description' => $place->description,
+                'coordinates' => [
+                    'lat' => $coordinates->lat,
+                    'lng' => $coordinates->lng,
+                ],
+                'images' => $images,
+                'type' => $place->category->name,
+                'nameEvent' => $place->nameEvent,
+                'dayEvent' => $place->dayEvent,
+                'hourEvent' => $place->hourEvent,
+                'created_at' => $place->created_at,
+                'updated_at' => $place->updated_at,
+            ];
+        });
+
+        return $transformPlaces;
     }
 
     /**
