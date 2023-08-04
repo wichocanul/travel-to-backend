@@ -30,6 +30,8 @@ Route::middleware(['auth:sanctum'])->group(function() {
 
     Route::match(['put', 'patch'], 'edit-place/{id}', [PlacesController::class, 'update']);
 
+    Route::delete('delete-place/{id}', [PlacesController::class, 'destroy']);
+
     Route::get('logout', [AuthController::class, 'logout']);
 
 });
