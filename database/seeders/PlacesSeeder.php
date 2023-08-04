@@ -16,7 +16,7 @@ class PlacesSeeder extends Seeder
         DB::table('places')->insert([
             'name' => "Festival de la luz y la vida",
             'description' => "Evento en la laguna del pueblo",
-            'coordinates' => json_encode(['lat' => 40.7128, 'lng' => -74.0060]),
+            'coordinates' => json_encode(['lat' => 19.84039, 'lng' => -98.02419]),
             'images' => json_encode(['img1.jpg', 'img2.jpg']),
             'type' => 2,
             'nameEvent' => 'Festival de la luz y la vida',
@@ -26,7 +26,7 @@ class PlacesSeeder extends Seeder
         DB::table('places')->insert([
             'name' => "Hotel 9 manantiales",
             'description' => "Hotel 5 estrellas",
-            'coordinates' => json_encode(['lat' => 40.7128, 'lng' => -74.0060]),
+            'coordinates' => json_encode(['lat' => 19.84139, 'lng' => -98.02339]),
             'images' => json_encode(['img1.jpg', 'img2.jpg']),
             'type' => 3,
             'nameEvent' => 'pool party',
@@ -36,7 +36,7 @@ class PlacesSeeder extends Seeder
         DB::table('places')->insert([
             'name' => "Rincon Mexicano",
             'description' => "Disfruta de la mejor comida mexicana",
-            'coordinates' => json_encode(['lat' => 40.7128, 'lng' => -74.0060]),
+            'coordinates' => json_encode(['lat' => 19.83648, 'lng' => -98.02999]),
             'images' => json_encode(['img1.jpg', 'img2.jpg']),
             'type' => 4,
             'nameEvent' => 'Musica en vivo',

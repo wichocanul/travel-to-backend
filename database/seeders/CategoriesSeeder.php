@@ -20,13 +20,13 @@ class CategoriesSeeder extends Seeder
             'name' => "Turismo"
         ]);
         DB::table('categories')->insert([
-            'name' => "Eventos"
+            'name' => "Evento"
         ]);
         DB::table('categories')->insert([
-            'name' => "Hoteles"
+            'name' => "Hospedaje"
         ]);
         DB::table('categories')->insert([
-            'name' => "Restaurantes"
+            'name' => "Restaurante"
         ]);
     }
 }
