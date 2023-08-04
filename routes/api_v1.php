@@ -18,9 +18,12 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-
-Route::get('places', [PlacesController::class, 'index']);
-
-Route::post('register', [AuthController::class, 'register']);
-
+Route::post('register-admin', [AuthController::class, 'register']);
 Route::post('login', [AuthController::class, 'login']);
+
+Route::middleware(['auth:sanctum'])->group(function() {
+
+    Route::get('places', [PlacesController::class, 'index']);
+    Route::get('logout', [AuthController::class, 'logout']);
+
+});

@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Laravel\Sanctum\PersonalAccessToken;
 
 class AuthController extends Controller
 {
@@ -60,10 +61,19 @@ class AuthController extends Controller
         $token = $user->createToken('auth_token')->plainTextToken;
 
         return response()->json([
-            'message' => 'Hi ', $user->name,
+            'message' => "Hi ". $user->user,
             'access_token' => $token,
             'token_type' => 'Bearer',
             'user' => $user,
         ]);
+    }
+
+    public function logout(Request $request)
+    {
+        $request->user()->tokens()->delete();
+
+        return response()->json([
+            'message' => 'You have successfully logged out and the token was successfully deleted'
+        ], 200);
     }
 }
