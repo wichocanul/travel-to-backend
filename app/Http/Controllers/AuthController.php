@@ -10,23 +10,30 @@ use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
+    private $apikey;
+
+    public function __construct()
+    {
+        $this->apikey = env('API_KEY');
+    }
+
     public function register(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:255',
+            'user' => 'required|string|max:255',
             'email' => 'required|string|email|unique:users',
-            'password' => 'required|string'
+            'password' => 'required|string',
+            'apikey' => 'required|string'
         ]);
 
-        if($validator->fails()) {
+        if($validator->fails() || $request->apikey !== $this->apikey) {
             return response()->json([
-                'warning' => 'Error',
-                'message' => $validator->errors()
+                'message' => 'could not create user',
             ], 400);
         }
 
         $user = User::create([
-            'name' => $request->name,
+            'user' => $request->user,
             'email' => $request->email,
             'password' => Hash::make($request->password)
         ]);
