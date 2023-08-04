@@ -19,9 +19,9 @@ return new class extends Migration
             $table->json('images');
             $table->unsignedBigInteger('type');
             $table->foreign('type')->references('id')->on('categories');
-            $table->string('nameEvent');
-            $table->date('dayEvent'); // 'YYYY-MM-DD'
-            $table->time('hourEvent'); // 'HH:mm'
+            $table->string('nameEvent')->nullable();
+            $table->date('dayEvent')->nullable(); // 'YYYY-MM-DD'
+            $table->time('hourEvent')->nullable(); // 'HH:mm'
             $table->timestamps();
         });
     }

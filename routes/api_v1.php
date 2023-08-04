@@ -21,9 +21,11 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::post('register-admin', [AuthController::class, 'register']);
 Route::post('login', [AuthController::class, 'login']);
 
+Route::get('places', [PlacesController::class, 'index']);
+
 Route::middleware(['auth:sanctum'])->group(function() {
 
-    Route::get('places', [PlacesController::class, 'index']);
+    Route::post('places', [PlacesController::class, 'create']);
     Route::get('logout', [AuthController::class, 'logout']);
 
 });
