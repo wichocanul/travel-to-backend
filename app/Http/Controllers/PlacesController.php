@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Places;
 use Carbon\Carbon;
 use Exception;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
@@ -16,9 +17,26 @@ class PlacesController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $places = Places::orderBy('id')->get();
+        $query = Places::orderBy('id');
+
+        if ($request->has('type')) {
+            $query->whereHas('category', function ($q) use ($request) {
+                $q->where('name', $request->input('type'));
+            });
+        }
+
+        if ($request->has('search')) {
+            $searchTerm = $request->input('search');
+            $query->where('name', 'like', '%' . $searchTerm . '%');
+        }
+
+        $places = $query->get();
+
+        if ($places->isEmpty()) {
+            return response()->json(['message' => 'not found places'], Response::HTTP_NOT_FOUND);
+        }
 
         $transformPlaces = $places->map(function($place) {
             $coordinates = json_decode($place->coordinates);
@@ -105,7 +123,7 @@ class PlacesController extends Controller
         ];
 
         $place = Places::create([
-            'name' => $request->input('name'),
+            'name' => strtolower($request->input('name')),
             'description' => $request->input('description'),
             'coordinates' => json_encode($coordinates),
             'images' => json_encode($uploadedImages, JSON_UNESCAPED_SLASHES),
@@ -166,7 +184,7 @@ class PlacesController extends Controller
 
             $place = Places::findOrFail($id);
 
-            $place->update($$request->all());
+            $place->update($request->all());
 
             return response()->json([
                 'message' => 'the place was updated',
