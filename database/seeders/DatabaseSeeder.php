@@ -24,7 +24,7 @@ class DatabaseSeeder extends Seeder
 
         $this->call([
             CategoriesSeeder::class,
-            PlacesSeeder::class,
+            // PlacesSeeder::class,
         ]);
     }
 }

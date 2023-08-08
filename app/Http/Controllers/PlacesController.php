@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Places;
 use Carbon\Carbon;
 use Exception;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 
@@ -22,6 +23,12 @@ class PlacesController extends Controller
         $transformPlaces = $places->map(function($place) {
             $coordinates = json_decode($place->coordinates);
             $images = json_decode($place->images);
+            $imageUrls = [];
+
+            foreach ($images as $image) {
+                $imageUrl = url("storage/{$image}");
+                $imageUrls[] = $imageUrl;
+            }
 
             return [
                 'id' => $place->id,
@@ -31,7 +38,7 @@ class PlacesController extends Controller
                     'lat' => $coordinates->lat,
                     'lng' => $coordinates->lng,
                 ],
-                'images' => $images,
+                'images' => $imageUrls,
                 'type' => $place->category->name,
                 'nameEvent' => $place->nameEvent,
                 'dayEvent' => $place->dayEvent,
@@ -55,6 +62,7 @@ class PlacesController extends Controller
             'coordinates.lat' => 'required|numeric',
             'coordinates.lng' => 'required|numeric',
             'images' => 'required|array',
+            'images.*' => 'image|mimes:jpeg,png,jpg|max:2048',
             'type' => 'required|integer',
             'nameEvent' => 'nullable|string',
             'dayEvent' => 'nullable|date_format:d-m-Y',
@@ -85,6 +93,12 @@ class PlacesController extends Controller
             ], 422);
         }
 
+        $uploadedImages = [];
+        foreach ($request->file('images') as $image) {
+            $imagePath = $image->store('images', 'public');
+            $uploadedImages[] = $imagePath; // Guardar ruta relativa
+        }
+
         $coordinates = [
             'lat' => $request->input('coordinates')['lat'],
             'lng' => $request->input('coordinates')['lng'],
@@ -94,7 +108,7 @@ class PlacesController extends Controller
             'name' => $request->input('name'),
             'description' => $request->input('description'),
             'coordinates' => json_encode($coordinates),
-            'images' => json_encode($request->input('images'), JSON_UNESCAPED_SLASHES),
+            'images' => json_encode($uploadedImages, JSON_UNESCAPED_SLASHES),
             'type' => $request->input('type'),
             'nameEvent' => $request->input('nameEvent') ?? '',
             'dayEvent' => $request->input('dayEvent'),
@@ -112,6 +126,7 @@ class PlacesController extends Controller
      */
     public function update(Request $request, $id)
     {
+
         $validator = Validator::make($request->all(), [
             'name' => 'required|string',
             'description' => 'required|string',
@@ -133,7 +148,6 @@ class PlacesController extends Controller
             'coordinates.lng.numeric' => 'The longitude must be a numeric value',
             'images.required' => 'The images field is required',
             'images.array' => 'The images must be an array',
-            'images.*.string' => 'Cada elemento del arreglo imágenes debe ser una cadena',
             'type.required' => 'The type field is required',
             'type.numeric' => 'The type must be a numeric value',
             'nameEvent.string' => 'The nameEvent must be a string',
@@ -152,9 +166,7 @@ class PlacesController extends Controller
 
             $place = Places::findOrFail($id);
 
-            $dataToUpdate = $request->except(['id']);
-
-            $place->update($dataToUpdate);
+            $place->update($$request->all());
 
             return response()->json([
                 'message' => 'the place was updated',
@@ -164,7 +176,7 @@ class PlacesController extends Controller
         } catch (Exception $e) {
 
             return  response()->json([
-                'message' => 'Error updating group'
+                'message' => 'Error updating place'
             ], 500);
 
         }
@@ -178,6 +190,14 @@ class PlacesController extends Controller
         try {
 
             $place = Places::findOrFail($id);
+
+            // Eliminar las imágenes asociadas al lugar
+            $images = json_decode($place->images);
+            foreach ($images as $image) {
+                // Eliminar la imagen del sistema de archivos
+                Storage::delete("public/{$image}");
+            }
+
             $place->delete();
 
             return response()->json([
