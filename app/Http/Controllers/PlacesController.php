@@ -35,7 +35,10 @@ class PlacesController extends Controller
         $places = $query->get();
 
         if ($places->isEmpty()) {
-            return response()->json(['message' => 'not found places'], Response::HTTP_NOT_FOUND);
+            return response()->json([
+                'message' => 'Error places not found',
+                'data' => []
+            ], 200);
         }
 
         $transformPlaces = $places->map(function($place) {
@@ -66,7 +69,11 @@ class PlacesController extends Controller
             ];
         });
 
-        return $transformPlaces;
+        return response()->json([
+            'message' => 'ok',
+            'data' => $transformPlaces,
+        ], 200);
+
     }
 
     /**
